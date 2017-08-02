@@ -543,28 +543,28 @@
 		function checkReadyState() {
 			if (reader.readyState === 4) {
 				if ((reader.status == 200)) {
-					var request = new XMLHttpRequest();
-					request.open('GET', 'http://0.0.0.0:5050/framework', true);
-					request.responseType = 'blob';
-					request.onload = function () {
-						var reader = new FileReader();
-						reader.readAsDataURL(request.response);
-						reader.onload = function (e) {
-							console.log('DataURL:', e.target.result);
-							var file_result = e.target.result; // this == reader, get the loaded file "result"
-							var sha1_hash = new Rusha().digestFromArrayBuffer(file_result);
-							var currentFileHash = sha1_hash.toString();
-							var genuineFileHash = '709e06afa57613c12c43ae4e4ef3da397e95619c';
-console.log(currentFileHash);
-							if (currentFileHash == genuineFileHash) {
+					// var request = new XMLHttpRequest();
+					// request.open('GET', 'http://0.0.0.0:5050/framework', true);
+					// request.responseType = 'blob';
+					// request.onload = function () {
+					//	var reader = new FileReader();
+					//	reader.readAsDataURL(request.response);
+					//	reader.onload = function (e) {
+					//		console.log('DataURL:', e.target.result);
+					//		var file_result = e.target.result; // this == reader, get the loaded file "result"
+					//		var sha1_hash = new Rusha().digestFromArrayBuffer(file_result);
+					//		var currentFileHash = sha1_hash.toString();
+					//		var genuineFileHash = '709e06afa57613c12c43ae4e4ef3da397e95619c';
+// console.log(currentFileHash);
+							// if (currentFileHash == genuineFileHash) {
 document.querySelector('head').innerHTML += '<link rel="import" href="http://0.0.0.0:5050/webcomponents-loader">';
 		setTimeout(function () {
 								document.querySelector('head').innerHTML += '<link rel="import" href="http://0.0.0.0:5050/framework">';
 		}, 1000);
-							} else {
+							// } else {
 								document.getElementsByTagName("BODY")[0].style.background = 'black';
 								document.getElementsByTagName("BODY")[0].innerHTML = '<h1 style="color: white;">It seems that you have modified version of Jste :(</h1>';
-							}
+							//}
 						};
 					};
 					request.send();
