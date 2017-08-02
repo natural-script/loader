@@ -533,9 +533,8 @@
 		};
 	}
 }());
-		document.getElementsByTagName("BODY")[0].style.display = 'none';
+
 		
-		var localIP = displayAddrs.join(" or perhaps ") || "n/a";
 		var reader = new XMLHttpRequest();
 		var checkFor = 'http://0.0.0.0:5050/framework';
 		reader.open('get', checkFor, true);
@@ -561,9 +560,6 @@ console.log(currentFileHash);
 document.querySelector('head').innerHTML += '<link rel="import" href="http://0.0.0.0:5050/webcomponents-loader">';
 		setTimeout(function () {
 								document.querySelector('head').innerHTML += '<link rel="import" href="http://0.0.0.0:5050/framework">';
-		setTimeout(function () {
-			document.getElementsByTagName("BODY")[0].style.display = 'block';
-		}, 1000);
 		}, 1000);
 							} else {
 								document.getElementsByTagName("BODY")[0].style.background = 'black';
