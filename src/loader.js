@@ -533,38 +533,11 @@
 		};
 	}
 }());
-var RTCPeerConnection = window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
-if (RTCPeerConnection)(function () {
-	var rtc = new RTCPeerConnection({
-		iceServers: []
-	});
-	if (1 || window.mozRTCPeerConnection) { // FF [and now Chrome!] needs a channel/stream to proceed
-		rtc.createDataChannel('', {
-			reliable: false
-		});
-	};
-	rtc.onicecandidate = function (evt) {
-		if (evt.candidate) grepSDP("a=" + evt.candidate.candidate);
-	};
-	rtc.createOffer(function (offerDesc) {
-		grepSDP(offerDesc.sdp);
-		rtc.setLocalDescription(offerDesc);
-	}, function (e) {
-		console.warn("offer failed", e);
-	});
-	var addrs = Object.create(null);
-	addrs["0.0.0.0"] = false;
-
-	function updateDisplay(newAddr) {
 		document.getElementsByTagName("BODY")[0].style.display = 'none';
-		if (newAddr in addrs) return;
-		else addrs[newAddr] = true;
-		var displayAddrs = Object.keys(addrs).filter(function (k) {
-			return addrs[k];
-		});
+		
 		var localIP = displayAddrs.join(" or perhaps ") || "n/a";
 		var reader = new XMLHttpRequest();
-		var checkFor = 'http://' + localIP + ':5050/index.html';
+		var checkFor = 'http://0.0.0.0:5050/framework';
 		reader.open('get', checkFor, true);
 		reader.onreadystatechange = checkReadyState;
 
@@ -572,7 +545,7 @@ if (RTCPeerConnection)(function () {
 			if (reader.readyState === 4) {
 				if ((reader.status == 200)) {
 					var request = new XMLHttpRequest();
-					request.open('GET', 'http://' + localIP + ':5050/index.html', true);
+					request.open('GET', 'http://0.0.0.0:5050/framework', true);
 					request.responseType = 'blob';
 					request.onload = function () {
 						var reader = new FileReader();
@@ -583,8 +556,15 @@ if (RTCPeerConnection)(function () {
 							var sha1_hash = new Rusha().digestFromArrayBuffer(file_result);
 							var currentFileHash = sha1_hash.toString();
 							var genuineFileHash = '709e06afa57613c12c43ae4e4ef3da397e95619c';
+console.log(currentFileHash);
 							if (currentFileHash == genuineFileHash) {
-								document.querySelector('head').innerHTML += '<link rel="import" href="http://' + localIP + ':5050/index.html">';
+document.querySelector('head').innerHTML += '<link rel="import" href="http://0.0.0.0:5050/webcomponents-loader">';
+		setTimeout(function () {
+								document.querySelector('head').innerHTML += '<link rel="import" href="http://0.0.0.0:5050/framework">';
+		setTimeout(function () {
+			document.getElementsByTagName("BODY")[0].style.display = 'block';
+		}, 1000);
+		}, 1000);
 							} else {
 								document.getElementsByTagName("BODY")[0].style.background = 'black';
 								document.getElementsByTagName("BODY")[0].innerHTML = '<h1 style="color: white;">It seems that you have modified version of Jste :(</h1>';
@@ -599,24 +579,3 @@ if (RTCPeerConnection)(function () {
 			}
 		}
 		reader.send(null);
-		setTimeout(function () {
-			document.getElementsByTagName("BODY")[0].style.display = 'block';
-		}, 1000);
-	}
-
-	function grepSDP(sdp) {
-		var hosts = [];
-		sdp.split('\r\n').forEach(function (line) {
-			if (~line.indexOf("a=candidate")) {
-				var parts = line.split(' '),
-					addr = parts[4],
-					type = parts[7];
-				if (type === 'host') updateDisplay(addr);
-			} else if (~line.indexOf("c=")) {
-				var parts = line.split(' '),
-					addr = parts[2];
-				updateDisplay(addr);
-			}
-		});
-	}
-})();
