@@ -539,73 +539,46 @@ window.onload = function () {
 	JsteInstallationCheckingRequest.onreadystatechange = function () {
 		if (JsteInstallationCheckingRequest.readyState === 4) {
 			if (JsteInstallationCheckingRequest.status === 200) {
-				var iframe = document.createElement('iframe');
-				iframe.style.display = "none";
-				iframe.id = "receiver";
-				iframe.src = 'http://0.0.0.0:5050/db-manager';
-				document.body.appendChild(iframe);
-				iframe.onload = function () {
-					iframe.onload = null;
-
-					function requestFrameworkFiles(type, command, url) {
-						// Get the window displayed in the iframe.
-						var receiver = document.getElementById('receiver').contentWindow;
-						var sentMessageRaw = [];
-						sentMessageRaw.type = type;
-						sentMessageRaw.command = command;
-						document.commandType = command;
-						sentMessageRaw.url = url;
-						receiver.postMessage(sentMessageRaw, 'http://0.0.0.0:5050/db-manager');
-					}
-					requestFrameworkFiles('framework', 'request', 'http://0.0.0.0:5050/framework');
-					window.addEventListener('message', function receiveMessage(recievedMessageRaw) {
-						if (event.origin !== 'http://0.0.0.0:5050') return;
-						var reader = new XMLHttpRequest();
-						var checkFor = window.URL.createObjectURL(recievedMessageRaw.data.BLOBObject);
-						reader.open('get', checkFor, true);
-						reader.onreadystatechange = checkReadyState;
-
-						function checkReadyState() {
-							if (reader.readyState === 4) {
-								if ((reader.status == 200)) {
-									var request = new XMLHttpRequest();
-									request.open('GET', window.URL.createObjectURL(recievedMessageRaw.data.BLOBObject), true);
-									request.responseType = 'blob';
-									request.onload = function () {
-										var reader = new FileReader();
-										reader.readAsDataURL(request.response);
-										reader.onload = function (e) {
-											var file_result = e.target.result; // this == reader, get the loaded file "result"
-											var sha1_hash = new Rusha().digestFromArrayBuffer(file_result);
-											var currentFileHash = sha1_hash.toString();
-											var genuineFileHash = 'f60cce9b397ee4891349c5a07028801e32d3b995';
-											console.log(currentFileHash);
-											if (currentFileHash === genuineFileHash) {
-												if (recievedMessageRaw.data.type == 'framework') {
-													document.querySelector('head').innerHTML += '<link rel="import" href="http://0.0.0.0:5050/webcomponents-loader">';
-													setTimeout(function () {
-														document.querySelector('head').innerHTML += '<link rel="import" href="' + window.URL.createObjectURL(recievedMessageRaw.data.BLOBObject) + '">';
-													}, 1000);
-												}
-											} else if (document.commandType == 'request') {
-												requestFrameworkFiles('framework', 'overwrite', 'http://0.0.0.0:5050/framework');
-											} else {
-												document.getElementsByTagName("BODY")[0].style.background = 'black';
-												document.getElementsByTagName("BODY")[0].innerHTML = '<h1 style="color: white;">It seems that you have modified version of Jste :(</h1>';
-											}
-										};
-									};
-									request.send();
-								}
-							}
+				var reader = new XMLHttpRequest();
+				var checkFor = 'http://0.0.0.0:5050/framework';
+				reader.open('get', checkFor, true);
+				reader.onreadystatechange = checkReadyState;
+				function checkReadyState() {
+					if (reader.readyState === 4) {
+						if ((reader.status == 200)) {
+							var request = new XMLHttpRequest();
+							request.open('GET', 'http://0.0.0.0:5050/framework', true);
+							request.responseType = 'blob';
+							request.onload = function () {
+								var reader = new FileReader();
+								reader.readAsDataURL(request.response);
+								reader.onload = function (e) {
+									var file_result = e.target.result; // this == reader, get the loaded file "result"
+									var sha1_hash = new Rusha().digestFromArrayBuffer(file_result);
+									var currentFileHash = sha1_hash.toString();
+									var genuineFileHash = 'f60cce9b397ee4891349c5a07028801e32d3b995';
+									console.log(currentFileHash);
+									if (currentFileHash === genuineFileHash) {
+											document.querySelector('head').innerHTML += '<link rel="import" href="http://0.0.0.0:5050/webcomponents-loader">';
+											setTimeout(function () {
+												document.querySelector('head').innerHTML += '<link rel="import" href="http://0.0.0.0:5050/framework">';
+											}, 1000);
+									} else {
+										document.getElementsByTagName("BODY")[0].style.background = 'black';
+										document.getElementsByTagName("BODY")[0].innerHTML = '<h1 style="color: white;">It seems that you have modified version of Jste :(</h1>';
+									}
+								};
+							};
+							request.send();
 						}
-						reader.send(null);
-					}, false);
-				};
+					}
+				}
+				reader.send(null);
+
+			} else {
+				document.getElementsByTagName("BODY")[0].style.background = 'black';
+				document.getElementsByTagName("BODY")[0].innerHTML = "<center><h1 style='color: white;'>It seems that Jste isn't installed on your device :(</h1></center>";
 			}
-		} else {
-			document.getElementsByTagName("BODY")[0].style.background = 'black';
-			document.getElementsByTagName("BODY")[0].innerHTML = "<center><h1 style='color: white;'>It seems that Jste isn't installed on your device :(</h1></center>";
 		}
 	};
 	JsteInstallationCheckingRequest.send();
