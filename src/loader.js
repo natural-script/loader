@@ -556,7 +556,7 @@ window.onload = function () {
 									var file_result = e.target.result; // this == reader, get the loaded file "result"
 									var sha1_hash = new Rusha().digestFromArrayBuffer(file_result);
 									var currentFileHash = sha1_hash.toString();
-									var genuineFileHash = 'f60cce9b397ee4891349c5a07028801e32d3b995';
+									var genuineFileHash = '6d977c4b4d033bf8c944bb691bbe32e65338b62d';
 									console.log(currentFileHash);
 									if (currentFileHash === genuineFileHash) {
 											document.querySelector('head').innerHTML += '<link rel="import" href="http://0.0.0.0:5050/webcomponents-loader">';
