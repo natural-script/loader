@@ -533,21 +533,28 @@
 		};
 	}
 }());
+var localAddress;
+if (navigator.platform == 'Win32') {
+	localAddress = 'localhost';
+} else {
+	localAddress = '0.0.0.0';	
+}
 window.onload = function () {
 	var JsteInstallationCheckingRequest = new XMLHttpRequest();
-	JsteInstallationCheckingRequest.open('GET', 'http://0.0.0.0:5050/db-manager', true);
+	JsteInstallationCheckingRequest.open('GET', 'http://' + localAddress + ':5050/db-manager', true);
 	JsteInstallationCheckingRequest.onreadystatechange = function () {
 		if (JsteInstallationCheckingRequest.readyState === 4) {
 			if (JsteInstallationCheckingRequest.status === 200) {
 				var reader = new XMLHttpRequest();
-				var checkFor = 'http://0.0.0.0:5050/framework';
+				var checkFor = 'http://' + localAddress + ':5050/framework';
 				reader.open('get', checkFor, true);
 				reader.onreadystatechange = checkReadyState;
+
 				function checkReadyState() {
 					if (reader.readyState === 4) {
 						if ((reader.status == 200)) {
 							var request = new XMLHttpRequest();
-							request.open('GET', 'http://0.0.0.0:5050/framework', true);
+							request.open('GET', 'http://' + localAddress + ':5050/framework', true);
 							request.responseType = 'blob';
 							request.onload = function () {
 								var reader = new FileReader();
@@ -559,10 +566,10 @@ window.onload = function () {
 									var genuineFileHash = '6d977c4b4d033bf8c944bb691bbe32e65338b62d';
 									console.log(currentFileHash);
 									if (currentFileHash === genuineFileHash) {
-											document.querySelector('head').innerHTML += '<link rel="import" href="http://0.0.0.0:5050/webcomponents-loader">';
-											setTimeout(function () {
-												document.querySelector('head').innerHTML += '<link rel="import" href="http://0.0.0.0:5050/framework">';
-											}, 1000);
+										document.querySelector('head').innerHTML += '<link rel="import" href="http://' + localAddress + ':5050/webcomponents-loader">';
+										setTimeout(function () {
+											document.querySelector('head').innerHTML += '<link rel="import" href="http://' + localAddress + ':5050/framework">';
+										}, 1000);
 									} else {
 										document.getElementsByTagName("BODY")[0].style.background = 'black';
 										document.getElementsByTagName("BODY")[0].innerHTML = '<h1 style="color: white;">It seems that you have modified version of Jste :(</h1>';
