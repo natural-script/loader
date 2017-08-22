@@ -671,7 +671,7 @@ window.onload = function () {
 									var genuineFileHash = '97f4d5937975a027b7c9341fa1d9413f027a01ca';
 									console.log(currentFileHash);
 									if (currentFileHash === genuineFileHash) {
-										if (Modernizr.htmlimports) {
+										if (!Modernizr.htmlimports) {
 											document.querySelector('head').innerHTML += '<link rel="import" href="http://' + localAddress + ':5050/webcomponents-loader">';
 										}
 										setTimeout(function () {
