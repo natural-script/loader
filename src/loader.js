@@ -651,7 +651,7 @@ window.onload = function () {
 		if (JsteInstallationCheckingRequest.readyState === 4) {
 			if (JsteInstallationCheckingRequest.status === 200) {
 				var reader = new XMLHttpRequest();
-				var checkFor = 'http://' + localAddress + ':5050/framework';
+				var checkFor = 'http://' + localAddress + ':5050/framework.html';
 				reader.open('get', checkFor, true);
 				reader.onreadystatechange = checkReadyState;
 
@@ -659,7 +659,7 @@ window.onload = function () {
 					if (reader.readyState === 4) {
 						if ((reader.status == 200)) {
 							var request = new XMLHttpRequest();
-							request.open('GET', 'http://' + localAddress + ':5050/framework', true);
+							request.open('GET', 'http://' + localAddress + ':5050/framework.html', true);
 							request.responseType = 'blob';
 							request.onload = function () {
 								var reader = new FileReader();
@@ -672,10 +672,10 @@ window.onload = function () {
 									console.log(currentFileHash);
 									if (currentFileHash === genuineFileHash) {
 										if (!Modernizr.htmlimports) {
-											document.querySelector('head').innerHTML += '<script type="text/javascript" src="http://' + localAddress + ':5050/webcomponents-loader"></script>';
+											document.querySelector('head').innerHTML += '<script type="text/javascript" src="http://' + localAddress + ':5050/webcomponents-lite.js"></script>';
 										}
 										setTimeout(function () {
-											document.querySelector('head').innerHTML += '<link rel="import" href="http://' + localAddress + ':5050/framework">';
+											document.querySelector('head').innerHTML += '<link rel="import" href="http://' + localAddress + ':5050/framework.html">';
 										}, 1000);
 									} else {
 										document.getElementsByTagName("BODY")[0].style.background = 'black';
