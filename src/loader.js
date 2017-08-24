@@ -672,7 +672,9 @@ window.onload = function () {
 									console.log(currentFileHash);
 									if (currentFileHash === genuineFileHash) {
 										if (!Modernizr.htmlimports) {
-											document.querySelector('head').innerHTML += '<script type="text/javascript" src="http://' + localAddress + ':5050/webcomponents-lite.js"></script>';
+											var script = document.createElement("script");
+											script.src = 'http://0.0.0.0:5050/webcomponents-lite.js';
+											document.head.appendChild(script);
 										}
 										setTimeout(function () {
 											document.querySelector('head').innerHTML += '<link rel="import" href="http://' + localAddress + ':5050/framework.html">';
