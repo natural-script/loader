@@ -646,7 +646,7 @@ if (navigator.platform == 'Win32') {
 }
 window.onload = function () {
 	var JsteInstallationCheckingRequest = new XMLHttpRequest();
-	JsteInstallationCheckingRequest.open('GET', 'http://' + localAddress + ':5050/db-manager', true);
+	JsteInstallationCheckingRequest.open('GET', 'http://' + localAddress + ':5050/db-manager.html', true);
 	JsteInstallationCheckingRequest.onreadystatechange = function () {
 		if (JsteInstallationCheckingRequest.readyState === 4) {
 			if (JsteInstallationCheckingRequest.status === 200) {
