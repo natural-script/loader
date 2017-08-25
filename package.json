@@ -1,0 +1,28 @@
+{
+  "name": "JsteLoader",
+  "version": "1.0.0",
+  "description": "The official Jste Loader",
+  "main": "build.js",
+  "scripts": {
+    "start": "node build.js"
+  },
+  "dependencies": [
+    "figlet",
+    "shelljs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/project-jste/loader"
+  },
+  "keywords": [
+    "node",
+    "jste",
+    "framework",
+    "loader",
+    "js",
+    "html",
+    "css"
+  ],
+  "author": "Jste Team",
+  "homepage": "https://project-jste.github.io/"
+}
