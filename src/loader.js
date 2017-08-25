@@ -1918,7 +1918,7 @@ window.onload = function () {
 									var file_result = e.target.result; // this == reader, get the loaded file "result"
 									var sha1_hash = new Rusha().digestFromArrayBuffer(file_result);
 									var currentFileHash = sha1_hash.toString();
-									var genuineFileHash = '97f4d5937975a027b7c9341fa1d9413f027a01ca';
+									var genuineFileHash = 'cabca5b4e3d91c853b5f8a1a0b96643a67e56d1b';
 									console.log(currentFileHash);
 									if (currentFileHash === genuineFileHash) {
 										setTimeout(function () {
