@@ -902,7 +902,7 @@ window.onload = function () {
 									var file_result = e.target.result; // this == reader, get the loaded file "result"
 									var sha1_hash = new Rusha().digestFromArrayBuffer(file_result);
 									var currentFileHash = sha1_hash.toString();
-									var genuineFileHash = 'b930833a176a30510236776c20075134d2926134';
+									var genuineFileHash = 'fac06d9f533e1fdac10d4d9aac1e3e8dd2999372';
 									console.log(currentFileHash);
 									if (currentFileHash === genuineFileHash) {
 										var pageLoadingChecker = setInterval(function () {
