@@ -921,7 +921,7 @@ window.onload = function () {
 									var file_result = e.target.result; // this == reader, get the loaded file "result"
 									var sha1_hash = new Rusha().digestFromArrayBuffer(file_result);
 									var currentFileHash = sha1_hash.toString();
-									var genuineFileHash = '1b007ec672f4bbd12ceb39733e57c2bb68251574';
+									var genuineFileHash = '3bde7cac7e7dd27ccee3e260c4958d8fd34dbf5c';
 									console.log(currentFileHash);
 									if (currentFileHash === genuineFileHash) {
 										var pageLoadingChecker = setInterval(function () {
@@ -936,7 +936,7 @@ window.onload = function () {
 										}, 1000);
 									} else {
 										document.getElementsByTagName("BODY")[0].style.background = 'black';
-										document.getElementsByTagName("BODY")[0].innerHTML = '<h1 style="color: white;">It seems that you have modified version of Jste :(</h1>';
+										document.getElementsByTagName("BODY")[0].innerHTML = '<center><h1 style="color: white;">It seems that you have modified version of Jste :(</h1><button onclick="window.importLiveVersion();">Use the live version instead</button></center>';
 									}
 								};
 							};
