@@ -535,31 +535,20 @@
 	}
 }());
 
-function nodeScriptReplace(node) {
-	if (nodeScriptIs(node) === true) {
-		node.parentNode.replaceChild(nodeScriptClone(node), node);
+function JSScriptsExec(node) {
+	if (node.tagName === 'SCRIPT') {
+		setTimeout(function () {
+			window.eval(node.innerHTML);
+		}, 100);
 	} else {
 		var i = 0;
 		var children = node.childNodes;
 		while (i < children.length) {
-			nodeScriptReplace(children[i++]);
+			JSScriptsExec(children[i++]);
 		}
 	}
-	return node;
 }
 
-function nodeScriptIs(node) {
-	return node.tagName === 'SCRIPT';
-}
-
-function nodeScriptClone(node) {
-	var script = document.createElement("script");
-	script.text = node.innerHTML;
-	for (var i = node.attributes.length - 1; i >= 0; i--) {
-		script.setAttribute(node.attributes[i].name, node.attributes[i].value);
-	}
-	return script;
-}
 /**
  * please-wait
  * Display a nice loading screen while your app loads
@@ -674,6 +663,8 @@ function nodeScriptClone(node) {
 			this._logoElem = this._loadingElem.getElementsByClassName("pg-loading-logo")[0];
 			if (this._logoElem != null) {
 				this._logoElem.src = this.options.logo;
+				this._logoElem.width = 180;
+				this._logoElem.height = 180;
 			}
 			removeClass("pg-loaded", document.body);
 			addClass("pg-loading", document.body);
@@ -850,6 +841,10 @@ if (navigator.platform == 'Win32') {
 	localAddress = '0.0.0.0';
 }
 window.onload = function () {
+	var meta = document.createElement('meta');
+	meta.name = 'viewport';
+	meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
+	document.getElementsByTagName('head')[0].appendChild(meta);
 	document.code = document.getElementsByTagName("BODY")[0].innerHTML;
 	var css = 'body.pg-loading{overflow:hidden}.pg-loading-screen{position:fixed;bottom:0;left:0;right:0;top:0;z-index:1000000;opacity:1;background-color:#FFF;-webkit-transition:background-color .4s ease-in-out 0s;-moz-transition:background-color .4s ease-in-out 0s;-ms-transition:background-color .4s ease-in-out 0s;-o-transition:background-color .4s ease-in-out 0s;transition:background-color .4s ease-in-out 0s}.pg-loading-screen.pg-loaded{opacity:0;-webkit-animation:pgAnimLoaded .5s cubic-bezier(.7,0,.3,1) both;-moz-animation:pgAnimLoaded .5s cubic-bezier(.7,0,.3,1) both;-ms-animation:pgAnimLoaded .5s cubic-bezier(.7,0,.3,1) both;-o-animation:pgAnimLoaded .5s cubic-bezier(.7,0,.3,1) both;animation:pgAnimLoaded .5s cubic-bezier(.7,0,.3,1) both}.pg-loading-screen.pg-loading .pg-loading-html,.pg-loading-screen.pg-loading .pg-loading-logo-header{opacity:1}.pg-loading-screen.pg-loading .pg-loading-html:not(.pg-loaded),.pg-loading-screen.pg-loading .pg-loading-logo-header{-webkit-animation:pgAnimLoading 1s cubic-bezier(.7,0,.3,1) both;-moz-animation:pgAnimLoading 1s cubic-bezier(.7,0,.3,1) both;-ms-animation:pgAnimLoading 1s cubic-bezier(.7,0,.3,1) both;-o-animation:pgAnimLoading 1s cubic-bezier(.7,0,.3,1) both;animation:pgAnimLoading 1s cubic-bezier(.7,0,.3,1) both}.pg-loading-screen.pg-loading .pg-loading-html:not(.pg-loaded){-webkit-animation-delay:.3s;-moz-animation-delay:.3s;-ms-animation-delay:.3s;-o-animation-delay:.3s;animation-delay:.3s}.pg-loading-screen .pg-loading-inner{height:100%;width:100%;margin:0;padding:0;position:static}.pg-loading-screen .pg-loading-center-outer{width:100%;padding:0;display:table!important;height:100%;position:absolute;top:0;left:0;margin:0}.pg-loading-screen .pg-loading-center-middle{padding:0;vertical-align:middle;display:table-cell!important;margin:0;text-align:center}.pg-loading-screen .pg-loading-html,.pg-loading-screen .pg-loading-logo-header{width:100%;opacity:0}.pg-loading-screen .pg-loading-logo-header{text-align:center}.pg-loading-screen .pg-loading-logo-header img{display:inline-block!important}.pg-loading-screen .pg-loading-html{margin-top:90px}.pg-loading-screen .pg-loading-html.pg-loaded{-webkit-transition:opacity .5s cubic-bezier(.7,0,.3,1);-moz-transition:opacity .5s cubic-bezier(.7,0,.3,1);-ms-transition:opacity .5s cubic-bezier(.7,0,.3,1);-o-transition:opacity .5s cubic-bezier(.7,0,.3,1);transition:opacity .5s cubic-bezier(.7,0,.3,1)}.pg-loading-screen .pg-loading-html.pg-loaded.pg-removing{opacity:0}.pg-loading-screen .pg-loading-html.pg-loaded.pg-loading{opacity:1}@-webkit-keyframes pgAnimLoading{from{opacity:0}}@-moz-keyframes pgAnimLoading{from{opacity:0}}@-o-keyframes pgAnimLoading{from{opacity:0}}@-ms-keyframes pgAnimLoading{from{opacity:0}}@keyframes pgAnimLoading{from{opacity:0}}@-webkit-keyframes pgAnimLoaded{from{opacity:1}}@-moz-keyframes pgAnimLoaded{from{opacity:1}}@-o-keyframes pgAnimLoaded{from{opacity:1}}@-ms-keyframes pgAnimLoaded{from{opacity:1}}@keyframes pgAnimLoaded{from{opacity:1}}.spinner{color:#FFFFFF;margin:100px auto;width:40px;height:40px;position:relative;text-align:center;-webkit-animation:sk-rotate 2s infinite linear;animation:sk-rotate 2s infinite linear}.dot1,.dot2{color:#FFFFFF;width:60%;height:60%;display:inline-block;position:absolute;top:0;background-color:#FFFFFF;border-radius:100%;-webkit-animation:sk-bounce 2s infinite ease-in-out;animation:sk-bounce 2s infinite ease-in-out}.dot2{top:auto;bottom:0;-webkit-animation-delay:-1s;animation-delay:-1s}@-webkit-keyframes sk-rotate{100%{-webkit-transform:rotate(360deg)}}@keyframes sk-rotate{100%{transform:rotate(360deg);-webkit-transform:rotate(360deg)}}@-webkit-keyframes sk-bounce{0%,100%{-webkit-transform:scale(0)}50%{-webkit-transform:scale(1)}}@keyframes sk-bounce{0%,100%{transform:scale(0);-webkit-transform:scale(0)}50%{transform:scale(1);-webkit-transform:scale(1)}}',
 		head = document.head || document.getElementsByTagName('head')[0],
@@ -875,7 +870,7 @@ window.onload = function () {
 	} else if (document.getElementsByTagName("JP-JP").length == 1) {
 		logoURL = document.getElementsByTagName("JP-JP")[0].innerHTML.split("ロゴ: '").pop().split(",").shift();
 	}
-	var loading_screen = pleaseWait({
+	window.loading_screen = pleaseWait({
 		logo: logoURL,
 		backgroundColor: '#f46d3b',
 		loadingHtml: '<div class="spinner"><div class="dot1"></div><div class="dot2"></div></div>'
@@ -883,73 +878,87 @@ window.onload = function () {
 	window.importLiveVersion = function () {
 		document.getElementsByTagName("BODY")[0].innerHTML = document.code;
 		var request = new XMLHttpRequest();
-		request.open('GET', 'https://jste-manager.herokuapp.com/framework-LiveVersion.min.html', true);
+		request.open('GET', 'https://jste-manager.herokuapp.com/framework-LiveVersion.min.html', false);
 
 		request.onload = function () {
 			if (request.status >= 200 && request.status < 400) {
 				console.clear();
 				document.getElementsByTagName("BODY")[0].removeAttribute('class');
 				document.getElementsByTagName("BODY")[0].removeAttribute('style');
+				window.loading_screen = pleaseWait({
+					logo: logoURL,
+					backgroundColor: '#f46d3b',
+					loadingHtml: '<div class="spinner"><div class="dot1"></div><div class="dot2"></div></div>'
+				});
+				var pageLoadingChecker = setInterval(function () {
+					if (document.getElementsByTagName("CONTENTS").length > 0) {
+						window.loading_screen.finish();
+						clearInterval(pageLoadingChecker);
+					}
+				}, 1);
 				setTimeout(function () {
 					document.getElementsByTagName("HEAD")[0].innerHTML += request.responseText;
-					nodeScriptReplace(document.getElementsByTagName("HEAD")[0]);
+					JSScriptsExec(document.getElementsByTagName("HEAD")[0]);
 				}, 1000);
 			}
 		};
 		request.send();
-	}
-	var JsteInstallationCheckingRequest = new XMLHttpRequest();
-	JsteInstallationCheckingRequest.open('GET', 'http://' + localAddress + ':5050/UI/index.html', true);
-	JsteInstallationCheckingRequest.onreadystatechange = function () {
-		if (JsteInstallationCheckingRequest.readyState === 4) {
-			if (JsteInstallationCheckingRequest.status === 200) {
-				var reader = new XMLHttpRequest();
-				var checkFor = 'http://' + localAddress + ':5050/framework.min.html';
-				reader.open('get', checkFor, true);
-				reader.onreadystatechange = checkReadyState;
+	};
+	if (location.protocol == 'http:') {
+		var JsteInstallationCheckingRequest = new XMLHttpRequest();
+		JsteInstallationCheckingRequest.open('GET', 'http://' + localAddress + ':5050/framework.min.html', false);
+		JsteInstallationCheckingRequest.onreadystatechange = function () {
+			if (JsteInstallationCheckingRequest.readyState === 4) {
+				if (JsteInstallationCheckingRequest.status === 200) {
+					var reader = new XMLHttpRequest();
+					var checkFor = 'http://' + localAddress + ':5050/framework.min.html';
+					reader.open('get', checkFor, true);
+					reader.onreadystatechange = checkReadyState;
 
-				function checkReadyState() {
-					if (reader.readyState === 4) {
-						if ((reader.status == 200)) {
-							var request = new XMLHttpRequest();
-							request.open('GET', 'http://' + localAddress + ':5050/framework.min.html', true);
-							request.responseType = 'blob';
-							request.onload = function () {
-								var reader = new FileReader();
-								reader.readAsText(request.response);
-								reader.onload = function (e) {
-									var file_result = e.target.result; // this == reader, get the loaded file "result"
+					function checkReadyState() {
+						if (reader.readyState === 4) {
+							if ((reader.status == 200)) {
+								var request = new XMLHttpRequest();
+								request.open('GET', 'http://' + localAddress + ':5050/framework.min.html', false);
+								request.onload = function () {
+									var file_result = request.response; // this == reader, get the loaded file "result"
 									var sha1_hash = new Rusha().digestFromArrayBuffer(file_result);
 									var currentFileHash = sha1_hash.toString();
-									var genuineFileHash = '3bde7cac7e7dd27ccee3e260c4958d8fd34dbf5c';
+									var genuineFileHash = 'ebc224acbc1e73b69cae51a8829747a4f556cf4a';
 									console.log(currentFileHash);
 									if (currentFileHash === genuineFileHash) {
 										var pageLoadingChecker = setInterval(function () {
 											if (document.getElementsByTagName("CONTENTS").length > 0) {
-												loading_screen.finish();
+												window.loading_screen.finish();
 												clearInterval(pageLoadingChecker);
 											}
 										}, 1);
 										setTimeout(function () {
 											document.getElementsByTagName("HEAD")[0].innerHTML += file_result;
-											nodeScriptReplace(document.getElementsByTagName("HEAD")[0]);
+											JSScriptsExec(document.getElementsByTagName("HEAD")[0]);
 										}, 1000);
 									} else {
+										window.loading_screen.finish();
 										document.getElementsByTagName("BODY")[0].style.background = 'black';
 										document.getElementsByTagName("BODY")[0].innerHTML = '<center><h1 style="color: white;">It seems that you have modified version of Jste :(</h1><button onclick="window.importLiveVersion();">Use the live version instead</button></center>';
 									}
 								};
-							};
-							request.send();
+								request.send();
+							}
 						}
 					}
+					reader.send(null);
+				} else {
+					window.loading_screen.finish();
+					document.getElementsByTagName("BODY")[0].style.background = 'black';
+					document.getElementsByTagName("BODY")[0].innerHTML = "<center><h1 style='color: white;'>It seems that Jste isn't installed on your device :(</h1><button onclick='window.importLiveVersion();'>Use the live version instead</button></center>";
 				}
-				reader.send(null);
-			} else {
-				document.getElementsByTagName("BODY")[0].style.background = 'black';
-				document.getElementsByTagName("BODY")[0].innerHTML = "<center><h1 style='color: white;'>It seems that Jste isn't installed on your device :(</h1><button onclick='window.importLiveVersion();'>Use the live version instead</button></center>";
 			}
-		}
-	};
-	JsteInstallationCheckingRequest.send();
+		};
+		JsteInstallationCheckingRequest.send();
+	} else {
+		window.loading_screen.finish();
+		document.getElementsByTagName("BODY")[0].style.background = 'black';
+		document.getElementsByTagName("BODY")[0].innerHTML = '<center><h1 style="color: white;">Unfortunately, Jste local version doesn\'t support https yet :(</h1><button onclick="window.importLiveVersion();">Use the live version instead</button></center>';
+	}
 };
