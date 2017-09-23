@@ -841,6 +841,9 @@ if (navigator.platform == 'Win32') {
 	localAddress = '0.0.0.0';
 }
 window.onload = function () {
+	window.handleOpenURL = function (url) {
+		var ref = cordova.InAppBrowser.open(url.split('jste://')[1], '_self', 'location=yes');
+	};
 	var meta = document.createElement('meta');
 	meta.name = 'viewport';
 	meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
@@ -924,7 +927,7 @@ window.onload = function () {
 									var file_result = request.response; // this == reader, get the loaded file "result"
 									var sha1_hash = new Rusha().digestFromArrayBuffer(file_result);
 									var currentFileHash = sha1_hash.toString();
-									var genuineFileHash = 'ebc224acbc1e73b69cae51a8829747a4f556cf4a';
+									var genuineFileHash = 'a6479f548464fd334120b1757d0e4bcb4573cdef';
 									console.log(currentFileHash);
 									if (currentFileHash === genuineFileHash) {
 										var pageLoadingChecker = setInterval(function () {
