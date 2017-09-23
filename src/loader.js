@@ -909,7 +909,7 @@ window.onload = function () {
 	};
 	if (location.protocol == 'http:') {
 		var JsteInstallationCheckingRequest = new XMLHttpRequest();
-		JsteInstallationCheckingRequest.open('GET', 'http://' + localAddress + ':5050/framework.min.html', false);
+		JsteInstallationCheckingRequest.open('HEAD', 'http://' + localAddress + ':5050/framework.min.html', false);
 		JsteInstallationCheckingRequest.onreadystatechange = function () {
 			if (JsteInstallationCheckingRequest.readyState === 4) {
 				if (JsteInstallationCheckingRequest.status === 200) {
@@ -958,7 +958,13 @@ window.onload = function () {
 				}
 			}
 		};
-		JsteInstallationCheckingRequest.send();
+		try {
+			JsteInstallationCheckingRequest.send();
+		} catch (e) {
+			window.loading_screen.finish();
+			document.getElementsByTagName("BODY")[0].style.background = 'black';
+			document.getElementsByTagName("BODY")[0].innerHTML = "<center><h1 style='color: white;'>It seems that Jste isn't installed on your device :(</h1><button onclick='window.importLiveVersion();'>Use the live version instead</button></center>";
+		}
 	} else {
 		window.loading_screen.finish();
 		document.getElementsByTagName("BODY")[0].style.background = 'black';
