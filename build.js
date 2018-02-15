@@ -11,7 +11,7 @@ shell.cd('build');
 shell.rm('-rf', '*');
 shell.mkdir('minified', 'compressed');
 console.log(' Minifying the loader ');
-shell.exec('uglifyjs --compress --mangle -- ../src/loader.js > minified/loader.min.js');
+shell.exec('npx uglifyjs --compress --mangle -- ../src/loader.js > minified/loader.min.js');
 console.log(' Compresssing the loader minified file ');
 const gzip = zlib.createGzip(); 
 const inp = fs.createReadStream('minified/loader.min.js');
