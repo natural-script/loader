@@ -874,13 +874,13 @@ window.onload = function () {
 	var logoURL;
 	if (/^its logo is .*?$/gmi.test(document.jsteCode)) {
 		logoURL = document.jsteCode.split("its logo is ").pop().split(",").shift();
-	} else if (document.jsteCode.match(/^son logo est .*?$/gmyi)) {
+	} else if (/^son logo est .*?$/gmi.test(document.jsteCode)) {
 		logoURL = document.jsteCode.split("son logo est ").pop().split(",").shift();
-	} else if (document.jsteCode.match(/^الشعار الخاص به .*?$/gmyi)) {
+	} else if (/^الشعار الخاص به .*?$/gmi.test(document.jsteCode)) {
 		logoURL = document.jsteCode.split("الشعار الخاص به ").pop().split(",").shift();
-	} else if (document.jsteCode.match(/^اللوجو بتاعه .*?$/gmyi)) {
+	} else if (/^اللوجو بتاعه .*?$/gmi.test(document.jsteCode)) {
 		logoURL = document.jsteCode.split("اللوجو بتاعه ").pop().split(",").shift();
-	} else if (document.jsteCode.match(/^ロゴ: .*?$/gmyi)) {
+	} else if (/^ロゴ: .*?$/gmi.test(document.jsteCode)) {
 		logoURL = document.jsteCode.split("ロゴ: ").pop().split(",").shift();
 	}
 	window.loading_screen = pleaseWait({
