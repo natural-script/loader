@@ -17,6 +17,7 @@ console.log(' Compresssing the loader minified file ');
 var gzip = zlib.createGzip(); 
 var inp = fs.createReadStream('minified/loader.min.js');
 var out = fs.createWriteStream('compressed/loader.min.js.gz');
+inp.pipe(gzip).pipe(out);
 var gzip = zlib.createGzip(); 
 var inp = fs.createReadStream('minified/loader-CodePenVersion.min.js');
 var out = fs.createWriteStream('compressed/loader-CodePenVersion.min.js.gz');
