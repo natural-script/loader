@@ -6,7 +6,7 @@
  * Released under the GNU AGPLv3 license
  * https://project-jste.github.io/license
  *
- * Date: 2018-02-14
+ * Date: 2018-02-16
  */
 // Rusha JS
 (function () {
@@ -859,7 +859,7 @@ window.onload = function () {
 	meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
 	document.getElementsByTagName('head')[0].appendChild(meta);
 	document.jsteCode = document.getElementsByTagName("BODY")[0].innerHTML;
-	document.code = '<jste>\n' + document.jsteCode + '\n</jste>';
+	document.code = '<jste style="display: none;">\n' + document.jsteCode + '\n</jste>';
 	document.getElementsByTagName("BODY")[0].innerHTML = '';
 	var css = 'body.pg-loading{overflow:hidden}.pg-loading-screen{position:fixed;bottom:0;left:0;right:0;top:0;z-index:1000000;opacity:1;background-color:#FFF;-webkit-transition:background-color .4s ease-in-out 0s;-moz-transition:background-color .4s ease-in-out 0s;-ms-transition:background-color .4s ease-in-out 0s;-o-transition:background-color .4s ease-in-out 0s;transition:background-color .4s ease-in-out 0s}.pg-loading-screen.pg-loaded{opacity:0;-webkit-animation:pgAnimLoaded .5s cubic-bezier(.7,0,.3,1) both;-moz-animation:pgAnimLoaded .5s cubic-bezier(.7,0,.3,1) both;-ms-animation:pgAnimLoaded .5s cubic-bezier(.7,0,.3,1) both;-o-animation:pgAnimLoaded .5s cubic-bezier(.7,0,.3,1) both;animation:pgAnimLoaded .5s cubic-bezier(.7,0,.3,1) both}.pg-loading-screen.pg-loading .pg-loading-html,.pg-loading-screen.pg-loading .pg-loading-logo-header{opacity:1}.pg-loading-screen.pg-loading .pg-loading-html:not(.pg-loaded),.pg-loading-screen.pg-loading .pg-loading-logo-header{-webkit-animation:pgAnimLoading 1s cubic-bezier(.7,0,.3,1) both;-moz-animation:pgAnimLoading 1s cubic-bezier(.7,0,.3,1) both;-ms-animation:pgAnimLoading 1s cubic-bezier(.7,0,.3,1) both;-o-animation:pgAnimLoading 1s cubic-bezier(.7,0,.3,1) both;animation:pgAnimLoading 1s cubic-bezier(.7,0,.3,1) both}.pg-loading-screen.pg-loading .pg-loading-html:not(.pg-loaded){-webkit-animation-delay:.3s;-moz-animation-delay:.3s;-ms-animation-delay:.3s;-o-animation-delay:.3s;animation-delay:.3s}.pg-loading-screen .pg-loading-inner{height:100%;width:100%;margin:0;padding:0;position:static}.pg-loading-screen .pg-loading-center-outer{width:100%;padding:0;display:table!important;height:100%;position:absolute;top:0;left:0;margin:0}.pg-loading-screen .pg-loading-center-middle{padding:0;vertical-align:middle;display:table-cell!important;margin:0;text-align:center}.pg-loading-screen .pg-loading-html,.pg-loading-screen .pg-loading-logo-header{width:100%;opacity:0}.pg-loading-screen .pg-loading-logo-header{text-align:center}.pg-loading-screen .pg-loading-logo-header img{display:inline-block!important}.pg-loading-screen .pg-loading-html{margin-top:90px}.pg-loading-screen .pg-loading-html.pg-loaded{-webkit-transition:opacity .5s cubic-bezier(.7,0,.3,1);-moz-transition:opacity .5s cubic-bezier(.7,0,.3,1);-ms-transition:opacity .5s cubic-bezier(.7,0,.3,1);-o-transition:opacity .5s cubic-bezier(.7,0,.3,1);transition:opacity .5s cubic-bezier(.7,0,.3,1)}.pg-loading-screen .pg-loading-html.pg-loaded.pg-removing{opacity:0}.pg-loading-screen .pg-loading-html.pg-loaded.pg-loading{opacity:1}@-webkit-keyframes pgAnimLoading{from{opacity:0}}@-moz-keyframes pgAnimLoading{from{opacity:0}}@-o-keyframes pgAnimLoading{from{opacity:0}}@-ms-keyframes pgAnimLoading{from{opacity:0}}@keyframes pgAnimLoading{from{opacity:0}}@-webkit-keyframes pgAnimLoaded{from{opacity:1}}@-moz-keyframes pgAnimLoaded{from{opacity:1}}@-o-keyframes pgAnimLoaded{from{opacity:1}}@-ms-keyframes pgAnimLoaded{from{opacity:1}}@keyframes pgAnimLoaded{from{opacity:1}}.spinner{color:#FFFFFF;margin:100px auto;width:40px;height:40px;position:relative;text-align:center;-webkit-animation:sk-rotate 2s infinite linear;animation:sk-rotate 2s infinite linear}.dot1,.dot2{color:#FFFFFF;width:60%;height:60%;display:inline-block;position:absolute;top:0;background-color:#FFFFFF;border-radius:100%;-webkit-animation:sk-bounce 2s infinite ease-in-out;animation:sk-bounce 2s infinite ease-in-out}.dot2{top:auto;bottom:0;-webkit-animation-delay:-1s;animation-delay:-1s}@-webkit-keyframes sk-rotate{100%{-webkit-transform:rotate(360deg)}}@keyframes sk-rotate{100%{transform:rotate(360deg);-webkit-transform:rotate(360deg)}}@-webkit-keyframes sk-bounce{0%,100%{-webkit-transform:scale(0)}50%{-webkit-transform:scale(1)}}@keyframes sk-bounce{0%,100%{transform:scale(0);-webkit-transform:scale(0)}50%{transform:scale(1);-webkit-transform:scale(1)}}',
 		head = document.head || document.getElementsByTagName('head')[0],
@@ -897,39 +897,47 @@ window.onload = function () {
 			backgroundColor: '#f46d3b',
 			loadingHtml: '<div id="liveVersionLoader"><progress id="liveVersionLoadingProgress"></progress></div>'
 		});
-		var progressBar = document.getElementById('liveVersionLoadingProgress');
-		var request = new XMLHttpRequest();
-		request.onprogress = function (e) {
-			if (e.lengthComputable) {
-				progressBar.max = e.total;
-				progressBar.value = e.loaded;
-			}
-		};
-		request.onloadstart = function (e) {
-			progressBar.value = 0;
-		};
-		request.onloadend = function (e) {
-			progressBar.value = e.loaded;
-		};
-		request.open('GET', 'https://jste-manager.herokuapp.com/framework-LiveVersion.min.html', true);
+		var getFramworkLiveVersionFileInfo = new XMLHttpRequest();
+		getFramworkLiveVersionFileInfo.onreadystatechange = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				var fileInfo = JSON.parse(this.responseText);
+				window.genuineFileSize = fileInfo.size;
+				var progressBar = document.getElementById('liveVersionLoadingProgress');
+				var request = new XMLHttpRequest();
+				request.onprogress = function (e) {
+					progressBar.max = window.genuineFileSize;
+					progressBar.value = e.loaded;
+				};
+				request.onloadstart = function (e) {
+					progressBar.value = 0;
+				};
+				request.onloadend = function (e) {
+					progressBar.value = e.loaded;
+				};
+				request.open('GET', 'https://jste-manager.herokuapp.com/framework-LiveVersion.min.html', true);
 
-		request.onload = function () {
-			if (request.status >= 200 && request.status < 400) {
-				document.getElementById('liveVersionLoader').innerHTML = '<div class="spinner"><div class="dot1"></div><div class="dot2"></div></div>';
-				document.getElementsByTagName("BODY")[0].innerHTML = document.code;
-				var pageLoadingChecker = setInterval(function () {
-					if (document.getElementsByTagName("CONTENTS").length > 0) {
-						window.loading_screen.finish();
-						clearInterval(pageLoadingChecker);
+				request.onload = function () {
+					if (request.status >= 200 && request.status < 400) {
+						document.getElementById('liveVersionLoader').innerHTML = '<div class="spinner"><div class="dot1"></div><div class="dot2"></div></div>';
+						document.getElementsByTagName("BODY")[0].innerHTML = document.code;
+						var pageLoadingChecker = setInterval(function () {
+							if (document.getElementsByTagName("CONTENTS").length > 0) {
+								window.loading_screen.finish();
+								clearInterval(pageLoadingChecker);
+							}
+						}, 1);
+						setTimeout(function () {
+							document.getElementsByTagName("HEAD")[0].innerHTML += request.responseText;
+							JSScriptsExec(document.getElementsByTagName("HEAD")[0]);
+						}, 1000);
 					}
-				}, 1);
-				setTimeout(function () {
-					document.getElementsByTagName("HEAD")[0].innerHTML += request.responseText;
-					JSScriptsExec(document.getElementsByTagName("HEAD")[0]);
-				}, 1000);
-			}
+				};
+				request.send();
+			};
 		};
-		request.send();
+
+		getFramworkLiveVersionFileInfo.open("GET", "https://rawgit.com/project-jste/framework/master/build/compressed/framework-LiveVersion.info.json");
+		getFramworkLiveVersionFileInfo.send();
 	};
 	if (location.protocol == 'http:') {
 		var JsteInstallationCheckingRequest = new XMLHttpRequest();
@@ -937,10 +945,12 @@ window.onload = function () {
 		JsteInstallationCheckingRequest.onreadystatechange = function () {
 			if (JsteInstallationCheckingRequest.readyState === 4) {
 				if (JsteInstallationCheckingRequest.status === 200) {
-					var getFramworkFileHash = new XMLHttpRequest();
-					getFramworkFileHash.onreadystatechange = function () {
+					var getFramworkFileInfo = new XMLHttpRequest();
+					getFramworkFileInfo.onreadystatechange = function () {
 						if (this.readyState == 4 && this.status == 200) {
-							window.genuineFileHash = this.responseText;
+							var fileInfo = JSON.parse(this.responseText);
+							window.genuineFileSize = fileInfo.size;
+							window.genuineFileHash = fileInfo.sha1;
 							var reader = new XMLHttpRequest();
 							var checkFor = 'http://' + localAddress + ':5050/framework.min.html';
 							reader.open('get', checkFor, true);
@@ -980,8 +990,8 @@ window.onload = function () {
 							reader.send(null);
 						}
 					};
-					getFramworkFileHash.open("GET", "https://rawgit.com/project-jste/framework/master/build/compressed/framework.sha1");
-					getFramworkFileHash.send();
+					getFramworkFileInfo.open("GET", "https://rawgit.com/project-jste/framework/master/build/compressed/framework.info.json");
+					getFramworkFileInfo.send();
 				} else {
 					window.loading_screen.finish();
 					document.getElementsByTagName("BODY")[0].style.background = 'black';
