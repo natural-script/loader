@@ -945,53 +945,63 @@ window.onload = function () {
 		JsteInstallationCheckingRequest.onreadystatechange = function () {
 			if (JsteInstallationCheckingRequest.readyState === 4) {
 				if (JsteInstallationCheckingRequest.status === 200) {
-					var getFramworkFileInfo = new XMLHttpRequest();
-					getFramworkFileInfo.onreadystatechange = function () {
+					var getCompressedFramworkFileInfo = new XMLHttpRequest();
+					getCompressedFramworkFileInfo.onreadystatechange = function () {
 						if (this.readyState == 4 && this.status == 200) {
 							var fileInfo = JSON.parse(this.responseText);
-							window.genuineFileSize = fileInfo.size;
-							window.genuineFileHash = fileInfo.sha1;
-							var reader = new XMLHttpRequest();
-							var checkFor = 'http://' + localAddress + ':5050/framework.min.html';
-							reader.open('get', checkFor, true);
-							reader.onreadystatechange = checkReadyState;
+							window.genuineCompressedFileSize = fileInfo.size;
+							window.genuineCompressedFileHash = fileInfo.sha1;
+							var getMinifiedFramworkFileInfo = new XMLHttpRequest();
+							getMinifiedFramworkFileInfo.onreadystatechange = function () {
+								if (this.readyState == 4 && this.status == 200) {
+									var fileInfo = JSON.parse(this.responseText);
+									window.genuineMinifiedFileSize = fileInfo.size;
+									window.genuineMinifiedFileHash = fileInfo.sha1;
+									var reader = new XMLHttpRequest();
+									var checkFor = 'http://' + localAddress + ':5050/framework.min.html';
+									reader.open('get', checkFor, true);
+									reader.onreadystatechange = checkReadyState;
 
-							function checkReadyState() {
-								if (reader.readyState === 4) {
-									if ((reader.status == 200)) {
-										var request = new XMLHttpRequest();
-										request.open('GET', 'http://' + localAddress + ':5050/framework.min.html', false);
-										request.onload = function () {
-											var file_result = request.response; // this == reader, get the loaded file "result"
-											var sha1_hash = new Rusha().digestFromArrayBuffer(file_result);
-											window.currentFileHash = sha1_hash.toString();
-											if (window.currentFileHash === window.genuineFileHash) {
-												var pageLoadingChecker = setInterval(function () {
-													if (document.getElementsByTagName("CONTENTS").length > 0) {
+									function checkReadyState() {
+										if (reader.readyState === 4) {
+											if ((reader.status == 200)) {
+												var request = new XMLHttpRequest();
+												request.open('GET', 'http://' + localAddress + ':5050/framework.min.html', false);
+												request.onload = function () {
+													var file_result = request.response; // this == reader, get the loaded file "result"
+													var sha1_hash = new Rusha().digestFromArrayBuffer(file_result);
+													window.currentFileHash = sha1_hash.toString();
+													if (window.currentFileHash === window.genuineCompressedFileHash || window.genuineMinifiedFileHash) {
+														var pageLoadingChecker = setInterval(function () {
+															if (document.getElementsByTagName("CONTENTS").length > 0) {
+																window.loading_screen.finish();
+																clearInterval(pageLoadingChecker);
+															}
+														}, 1);
+														setTimeout(function () {
+															document.getElementsByTagName("HEAD")[0].innerHTML += file_result;
+															JSScriptsExec(document.getElementsByTagName("HEAD")[0]);
+														}, 1000);
+													} else {
+														console.error('The SHA-1 hash of the imported Jste framework file is: ' + window.currentFileHash + ', while that of the genuine Jste framework compressed file is ' + window.genuineCompressedFileHash + ' and that of the genuine Jste framework minified file is ' + window.genuineMinifiedFileHash);
 														window.loading_screen.finish();
-														clearInterval(pageLoadingChecker);
+														document.getElementsByTagName("BODY")[0].style.background = 'black';
+														document.getElementsByTagName("BODY")[0].innerHTML = '<center><h1 style="color: white;">It seems that you have modified version of Jste :(</h1><button onclick="window.importLiveVersion();">Use the live version instead</button></center>';
 													}
-												}, 1);
-												setTimeout(function () {
-													document.getElementsByTagName("HEAD")[0].innerHTML += file_result;
-													JSScriptsExec(document.getElementsByTagName("HEAD")[0]);
-												}, 1000);
-											} else {
-												console.error('The SHA-1 hash of the imported Jste framework file is: ' + window.currentFileHash + ', while that of the genuine Jste framework file is ' + window.genuineFileHash);
-												window.loading_screen.finish();
-												document.getElementsByTagName("BODY")[0].style.background = 'black';
-												document.getElementsByTagName("BODY")[0].innerHTML = '<center><h1 style="color: white;">It seems that you have modified version of Jste :(</h1><button onclick="window.importLiveVersion();">Use the live version instead</button></center>';
+												};
+												request.send();
 											}
-										};
-										request.send();
+										}
 									}
+									reader.send(null);
 								}
-							}
-							reader.send(null);
+							};
+							getMinifiedFramworkFileInfo.open("GET", "https://rawgit.com/project-jste/framework/master/build/minified/framework.info.json");
+							getMinifiedFramworkFileInfo.send();
 						}
-					};
-					getFramworkFileInfo.open("GET", "https://rawgit.com/project-jste/framework/master/build/compressed/framework.info.json");
-					getFramworkFileInfo.send();
+					}
+					getCompressedFramworkFileInfo.open("GET", "https://rawgit.com/project-jste/framework/master/build/compressed/framework.info.json");
+					getCompressedFramworkFileInfo.send();
 				} else {
 					window.loading_screen.finish();
 					document.getElementsByTagName("BODY")[0].style.background = 'black';
