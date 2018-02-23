@@ -971,7 +971,7 @@ window.onload = function () {
 													var file_result = request.response; // this == reader, get the loaded file "result"
 													var sha1_hash = new Rusha().digestFromArrayBuffer(file_result);
 													window.currentFileHash = sha1_hash.toString();
-													if (window.currentFileHash === window.genuineCompressedFileHash || window.genuineMinifiedFileHash) {
+													if (window.currentFileHash === window.genuineCompressedFileHash || window.currentFileHash === window.genuineMinifiedFileHash) {
 														var pageLoadingChecker = setInterval(function () {
 															if (document.getElementsByTagName("CONTENTS").length > 0) {
 																window.loading_screen.finish();
