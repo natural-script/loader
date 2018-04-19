@@ -358,7 +358,7 @@ window.onload = function () {
                 request.onloadend = function (e) {
                     progressBar.value = e.loaded;
                 };
-                request.open('GET', 'https://jste-manager.herokuapp.com/framework-LiveVersion.min.html', true);
+                request.open('GET', 'https://jste-manager.azurewebsites.net/framework-LiveVersion.min.html', true);
 
                 request.onload = function () {
                     if (request.status >= 200 && request.status < 400) {
