@@ -890,6 +890,7 @@ window.onload = function () {
 	});
 	window.importLiveVersion = function () {
 		console.clear();
+		window.isLive = true;
 		document.getElementsByTagName("BODY")[0].removeAttribute('class');
 		document.getElementsByTagName("BODY")[0].removeAttribute('style');
 		window.loading_screen = pleaseWait({
@@ -914,8 +915,7 @@ window.onload = function () {
 				request.onloadend = function (e) {
 					progressBar.value = e.loaded;
 				};
-				request.open('GET', 'https://jste-manager.azurewebsites.net/framework-LiveVersion.min.html', true);
-
+				request.open('GET', 'https://jste-manager.herokuapp.com/framework.min.html', true);
 				request.onload = function () {
 					if (request.status >= 200 && request.status < 400) {
 						document.getElementById('liveVersionLoader').innerHTML = '<div class="spinner"><div class="dot1"></div><div class="dot2"></div></div>';
@@ -935,8 +935,7 @@ window.onload = function () {
 				request.send();
 			};
 		};
-
-		getFramworkLiveVersionFileInfo.open("GET", "https://rawgit.com/project-jste/framework/master/build/compressed/framework-LiveVersion.info.json");
+		getFramworkLiveVersionFileInfo.open("GET", "https://rawgit.com/project-jste/framework/master/build/compressed/framework.info.json");
 		getFramworkLiveVersionFileInfo.send();
 	};
 	if (location.protocol == 'http:') {

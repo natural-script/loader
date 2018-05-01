@@ -308,6 +308,7 @@ function JSScriptsExec(node) {
     }
 }
 window.onload = function () {
+    window.isLive = true;
     var temp = location.host.split('.').reverse();
     var root_domain = temp[1] + '.' + temp[0];
     if (root_domain == 'codepen.io') {
@@ -358,7 +359,7 @@ window.onload = function () {
                 request.onloadend = function (e) {
                     progressBar.value = e.loaded;
                 };
-                request.open('GET', 'https://jste-manager.azurewebsites.net/framework-LiveVersion.min.html', true);
+                request.open('GET', 'https://jste-manager.herokuapp.com/framework.min.html', true);
 
                 request.onload = function () {
                     if (request.status >= 200 && request.status < 400) {
@@ -380,7 +381,7 @@ window.onload = function () {
             };
         };
 
-        getFramworkLiveVersionFileInfo.open("GET", "https://rawgit.com/project-jste/framework/master/build/compressed/framework-LiveVersion.info.json");
+        getFramworkLiveVersionFileInfo.open("GET", "https://rawgit.com/project-jste/framework/master/build/compressed/framework.info.json");
         getFramworkLiveVersionFileInfo.send();
     }
 }
