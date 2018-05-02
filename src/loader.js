@@ -549,7 +549,7 @@ function JSScriptsExec(node) {
 	if (node.tagName === 'SCRIPT') {
 		setTimeout(function () {
 			window.eval(node.innerHTML);
-		}, 100);
+		}, 2000);
 	} else {
 		var i = 0;
 		var children = node.childNodes;
@@ -888,9 +888,11 @@ window.onload = function () {
 		backgroundColor: '#f46d3b',
 		loadingHtml: '<div class="spinner"><div class="dot1"></div><div class="dot2"></div></div>'
 	});
-	window.importLiveVersion = function () {
+	window.downloadCurrentVersion = function (isLive) {
 		console.clear();
-		window.isLive = true;
+		if (isLive) {
+			window.isLive = true;
+		}
 		document.getElementsByTagName("BODY")[0].removeAttribute('class');
 		document.getElementsByTagName("BODY")[0].removeAttribute('style');
 		window.loading_screen = pleaseWait({
@@ -898,126 +900,102 @@ window.onload = function () {
 			backgroundColor: '#f46d3b',
 			loadingHtml: '<div id="liveVersionLoader"><progress id="liveVersionLoadingProgress"></progress></div>'
 		});
-		var getFramworkLiveVersionFileInfo = new XMLHttpRequest();
-		getFramworkLiveVersionFileInfo.onreadystatechange = function () {
-			if (this.readyState == 4 && this.status == 200) {
-				var fileInfo = JSON.parse(this.responseText);
-				window.genuineFileSize = fileInfo.size;
-				var progressBar = document.getElementById('liveVersionLoadingProgress');
-				var request = new XMLHttpRequest();
-				request.onprogress = function (e) {
-					progressBar.max = window.genuineFileSize;
-					progressBar.value = e.loaded;
-				};
-				request.onloadstart = function (e) {
-					progressBar.value = 0;
-				};
-				request.onloadend = function (e) {
-					progressBar.value = e.loaded;
-				};
-				request.open('GET', 'https://jste-manager.herokuapp.com/framework.min.html', true);
-				request.onload = function () {
-					if (request.status >= 200 && request.status < 400) {
-						document.getElementById('liveVersionLoader').innerHTML = '<div class="spinner"><div class="dot1"></div><div class="dot2"></div></div>';
-						document.getElementsByTagName("BODY")[0].innerHTML = document.code;
-						var pageLoadingChecker = setInterval(function () {
-							if (document.getElementsByTagName("CONTENTS").length > 0) {
-								window.loading_screen.finish();
-								clearInterval(pageLoadingChecker);
-							}
-						}, 1);
-						setTimeout(function () {
-							document.getElementsByTagName("HEAD")[0].innerHTML += request.responseText;
-							JSScriptsExec(document.getElementsByTagName("HEAD")[0]);
-						}, 1000);
-					}
-				};
-				request.send();
-			};
-		};
-		getFramworkLiveVersionFileInfo.open("GET", "https://rawgit.com/project-jste/framework/master/build/compressed/framework.info.json");
-		getFramworkLiveVersionFileInfo.send();
-	};
-	if (location.protocol == 'http:') {
-		var JsteInstallationCheckingRequest = new XMLHttpRequest();
-		JsteInstallationCheckingRequest.open('HEAD', 'http://' + localAddress + ':5050/framework.min.html', false);
-		JsteInstallationCheckingRequest.onreadystatechange = function () {
-			if (JsteInstallationCheckingRequest.readyState === 4) {
-				if (JsteInstallationCheckingRequest.status === 200) {
-					var getCompressedFramworkFileInfo = new XMLHttpRequest();
-					getCompressedFramworkFileInfo.onreadystatechange = function () {
-						if (this.readyState == 4 && this.status == 200) {
-							var fileInfo = JSON.parse(this.responseText);
-							window.genuineCompressedFileSize = fileInfo.size;
-							window.genuineCompressedFileHash = fileInfo.sha1;
-							var getMinifiedFramworkFileInfo = new XMLHttpRequest();
-							getMinifiedFramworkFileInfo.onreadystatechange = function () {
-								if (this.readyState == 4 && this.status == 200) {
-									var fileInfo = JSON.parse(this.responseText);
-									window.genuineMinifiedFileSize = fileInfo.size;
-									window.genuineMinifiedFileHash = fileInfo.sha1;
-									var reader = new XMLHttpRequest();
-									var checkFor = 'http://' + localAddress + ':5050/framework.min.html';
-									reader.open('get', checkFor, true);
-									reader.onreadystatechange = checkReadyState;
+		var progressBar = document.getElementById('liveVersionLoadingProgress');
+		progressBar.value = 0;
+		progressBar.max = window.genuineFileSize;
+		fetch('https://jste-manager.herokuapp.com/framework.min.html')
+			.then(response => {
+				const contentLength = window.genuineFileSize;
+				const total = parseInt(contentLength, 10);
+				let loaded = 0;
+				return new Response(
+					new ReadableStream({
+						start(controller) {
+							const reader = response.body.getReader();
+							read();
 
-									function checkReadyState() {
-										if (reader.readyState === 4) {
-											if ((reader.status == 200)) {
-												var request = new XMLHttpRequest();
-												request.open('GET', 'http://' + localAddress + ':5050/framework.min.html', false);
-												request.onload = function () {
-													var file_result = request.response; // this == reader, get the loaded file "result"
-													var sha1_hash = new Rusha().digestFromArrayBuffer(file_result);
-													window.currentFileHash = sha1_hash.toString();
-													if (window.currentFileHash == window.genuineCompressedFileHash || window.currentFileHash == window.genuineMinifiedFileHash) {
-														var pageLoadingChecker = setInterval(function () {
-															if (document.getElementsByTagName("CONTENTS").length > 0) {
-																window.loading_screen.finish();
-																clearInterval(pageLoadingChecker);
-															}
-														}, 1);
-														setTimeout(function () {
-															document.getElementsByTagName("HEAD")[0].innerHTML += file_result;
-															JSScriptsExec(document.getElementsByTagName("HEAD")[0]);
-														}, 1000);
-													} else {
-														console.error('The SHA-1 hash of the imported Jste framework file is: ' + window.currentFileHash + ', while that of the genuine Jste framework compressed file is ' + window.genuineCompressedFileHash + ' and that of the genuine Jste framework minified file is ' + window.genuineMinifiedFileHash);
-														window.loading_screen.finish();
-														document.getElementsByTagName("BODY")[0].style.background = 'black';
-														document.getElementsByTagName("BODY")[0].innerHTML = '<center><h1 style="color: white;">It seems that you have modified version of Jste :(</h1><button onclick="window.importLiveVersion();">Use the live version instead</button></center>';
-													}
-												};
-												request.send();
-											}
-										}
+							function read() {
+								reader.read().then(({
+									done,
+									value
+								}) => {
+									if (done) {
+										controller.close();
+										return;
 									}
-									reader.send(null);
-								}
-							};
-							getMinifiedFramworkFileInfo.open("GET", "https://rawgit.com/project-jste/framework/master/build/minified/framework.info.json");
-							getMinifiedFramworkFileInfo.send();
+									loaded += value.byteLength;
+									progressBar.value = loaded;
+									controller.enqueue(value);
+									read();
+								}).catch(error => {
+									console.error(error);
+									controller.error(error)
+								})
+							}
 						}
+					})
+				);
+			})
+			.then(res => res.text())
+			.then(function (frameworkCode) {
+				document.getElementById('liveVersionLoader').innerHTML = '<div class="spinner"><div class="dot1"></div><div class="dot2"></div></div>';
+				document.getElementsByTagName("BODY")[0].innerHTML = document.code;
+				var pageLoadingChecker = setInterval(function () {
+					if (document.getElementsByTagName("CONTENTS").length > 0) {
+						window.loading_screen.finish();
+						clearInterval(pageLoadingChecker);
 					}
-					getCompressedFramworkFileInfo.open("GET", "https://rawgit.com/project-jste/framework/master/build/compressed/framework.info.json");
-					getCompressedFramworkFileInfo.send();
-				} else {
-					window.loading_screen.finish();
-					document.getElementsByTagName("BODY")[0].style.background = 'black';
-					document.getElementsByTagName("BODY")[0].innerHTML = "<center><h1 style='color: white;'>It seems that Jste isn't installed on your device :(</h1><button onclick='window.importLiveVersion();'>Use the live version instead</button></center>";
-				}
+				}, 1);
+				setTimeout(function () {
+					document.getElementsByTagName("HEAD")[0].innerHTML += frameworkCode;
+					JSScriptsExec(document.getElementsByTagName("HEAD")[0]);
+				}, 1000);
+			}).catch(function (err) {
+				window.loading_screen.finish();
+				document.getElementsByTagName("BODY")[0].style.background = 'black';
+				document.getElementsByTagName("BODY")[0].innerHTML = `<center><h1 style='color: white;'>${err}</h1></center>`;
+			})
+	};
+
+	fetch(`https://rawgit.com/project-jste/framework/master/build/minified/framework.info.json`)
+		.then(res => res.json())
+		.then(function (genuineFileInfo) {
+			window.genuineFileSize = genuineFileInfo.size;
+			window.genuineFileHash = genuineFileInfo.sha1;
+		}).then(() => {
+			if (location.protocol == 'http:') {
+				fetch(`http://${localAddress}:5050/framework.min.html`)
+					.then(res => res.text())
+					.then(function (frameworkCode) {
+						let sha1_hash = new Rusha().digestFromArrayBuffer(new TextEncoder().encode(frameworkCode));
+						window.currentFileHash = sha1_hash.toString();
+						if (window.currentFileHash == window.genuineFileHash) {
+							document.getElementsByTagName("BODY")[0].innerHTML = document.code;
+							var pageLoadingChecker = setInterval(function () {
+								if (document.getElementsByTagName("CONTENTS").length > 0) {
+									window.loading_screen.finish();
+									clearInterval(pageLoadingChecker);
+								}
+							}, 1);
+							setTimeout(function () {
+								document.getElementsByTagName("HEAD")[0].innerHTML += frameworkCode;
+								JSScriptsExec(document.getElementsByTagName("HEAD")[0]);
+							}, 1000);
+						} else {
+							console.error(`The SHA-1 hash of the imported Jste framework file is: ${window.currentFileHash}, while that of the genuine Jste framework file is ${window.genuineFileHash}`);
+							window.loading_screen.finish();
+							document.getElementsByTagName("BODY")[0].style.background = 'black';
+							document.getElementsByTagName("BODY")[0].innerHTML = '<center><h1 style="color: white;">It seems that you have modified version of Jste :(</h1><button onclick="window.downloadCurrentVersion();">Use the live version instead</button></center>';
+						}
+					}).catch(function (err) {
+						window.loading_screen.finish();
+						document.getElementsByTagName("BODY")[0].style.background = 'black';
+						document.getElementsByTagName("BODY")[0].innerHTML = "<center><h1 style='color: white;'>It seems that Jste isn't installed on your device :(</h1><button onclick='window.downloadCurrentVersion(true);'>Use the live version instead</button></center>";
+					})
+			} else {
+				window.loading_screen.finish();
+				document.getElementsByTagName("BODY")[0].style.background = 'black';
+				document.getElementsByTagName("BODY")[0].innerHTML = '<center><h1 style="color: white;">Unfortunately, Jste local version doesn\'t support https yet :(</h1><button onclick="window.downloadCurrentVersion(true);">Use the live version instead</button></center>';
 			}
-		};
-		try {
-			JsteInstallationCheckingRequest.send();
-		} catch (e) {
-			window.loading_screen.finish();
-			document.getElementsByTagName("BODY")[0].style.background = 'black';
-			document.getElementsByTagName("BODY")[0].innerHTML = "<center><h1 style='color: white;'>It seems that Jste isn't installed on your device :(</h1><button onclick='window.importLiveVersion();'>Use the live version instead</button></center>";
-		}
-	} else {
-		window.loading_screen.finish();
-		document.getElementsByTagName("BODY")[0].style.background = 'black';
-		document.getElementsByTagName("BODY")[0].innerHTML = '<center><h1 style="color: white;">Unfortunately, Jste local version doesn\'t support https yet :(</h1><button onclick="window.importLiveVersion();">Use the live version instead</button></center>';
-	}
+		});
 };

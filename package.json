@@ -27,5 +27,8 @@
     "css"
   ],
   "author": "Jste Team",
-  "homepage": "https://project-jste.github.io/"
+  "homepage": "https://project-jste.github.io/",
+  "devDependencies": {
+    "uglify-es": "github:mishoo/UglifyJS2#harmony"
+  }
 }
