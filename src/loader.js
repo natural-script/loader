@@ -549,7 +549,7 @@ function JSScriptsExec(node) {
 	if (node.tagName === 'SCRIPT') {
 		setTimeout(function () {
 			window.eval(node.innerHTML);
-		}, 2000);
+		}, 100);
 	} else {
 		var i = 0;
 		var children = node.childNodes;
