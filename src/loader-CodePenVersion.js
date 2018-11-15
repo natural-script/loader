@@ -13,16 +13,7 @@ import style from './style.css'
 
 function initLoader(image, isProgress) {
     style.use()
-    document.getElementsByTagName("BODY")[0].innerHTML = `<div id="particles-js"><img id="loader_logo" src="${image}" /></div>`
-    if (isProgress) {
-        document.getElementById("particles-js").insertAdjacentHTML('beforeend', `<progress />`)
-    } else {
-        document.getElementById("particles-js").insertAdjacentHTML('beforeend', `<div class="spinner">
-        <div class="bounce1"></div>
-        <div class="bounce2"></div>
-        <div class="bounce3"></div>
-    </div>`)
-    }
+    document.getElementsByTagName("BODY")[0].innerHTML = `<div id="particles-js"><img id="loader_logo" src="${image}" /><progress /></div>`
     particlesJS("particles-js", {
         particles: {
             number: {
@@ -157,7 +148,7 @@ window.onload = function () {
         } else if (/^\s*\* اللوجو بتاعه (.*?)$/mi.test(document.jsteCode)) {
             logoURL = /^\s*\* اللوجو بتاعه (.*?)$/mi.exec(document.jsteCode)[1]
         }
-        initLoader(logoURL, false)
+        initLoader(logoURL)
         fetch(`https://jste-manager.herokuapp.com/getBuildInfo`)
             .then(res => res.json())
             .then(function (genuineBuildInfo) {

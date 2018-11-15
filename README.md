@@ -1,5 +1,7 @@
 # Jste Loader
 
+[![Build Status](https://travis-ci.org/project-jste/loader.svg?branch=master)](https://travis-ci.org/project-jste/loader)
+
 Jste Loader is used in loading and initializing Jste Framework. It also checks if the local installed version of Jste framework is genuine and up-to-date or not through checking its SHA-1 checksum thanks to RushaJS.
 
 ## Building Instructions:
