@@ -11,7 +11,7 @@
 import 'particles.js'
 import style from './style.css'
 
-function initLoader(image, isProgress) {
+function initLoader(image) {
     style.use()
     document.getElementsByTagName("BODY")[0].innerHTML = `<div id="particles-js"><img id="loader_logo" src="${image}" /><progress /></div>`
     particlesJS("particles-js", {
@@ -128,7 +128,6 @@ function initLoader(image, isProgress) {
 
 function finishLoading() {
     style.unuse()
-    document.getElementById("particles-js").outerHTML = ""
 }
 window.onload = function () {
     window.isLive = true;
